@@ -28,10 +28,9 @@ def main(freq_a4=A4):
 
     print(Message.welcome)
 
-    args = sys.argv
-
-    if len(args) > 1:
-        arg_a4_str = args[1]
+    # Catching command line arguments, checking for validity
+    if len(sys.argv) > 1:
+        arg_a4_str = sys.argv[1]
         try:
             arg_a4 = float(arg_a4_str)
             if is_a4_in_range(arg_a4):
