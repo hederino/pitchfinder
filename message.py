@@ -4,7 +4,7 @@ class Message:
     enter_freq = "\nEnter a frequency in Hz: "
     back_to_main = "\nGoing back to the main loop..."
     bye = "\nGoodbye!\n"
-    inv_freq = "\nInvalid value for a frequency."
+    invalid_freq = "\nInvalid value for a frequency."
 
     @classmethod
     def info(cls, x, y):
