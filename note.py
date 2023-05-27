@@ -3,7 +3,7 @@ from math import log2
 class Note:
     NOTE_NAMES = 'C', 'D', 'E', 'F', 'G', 'A', 'B'
     SUB = str.maketrans("-0123456789", "₋₀₁₂₃₄₅₆₇₈₉")
-    NOTE_STEPS = 0, 2, 4, 5, 7, 9, 11
+    NOTE_SEMITONE_STEPS = 0, 2, 4, 5, 7, 9, 11
     ACCIDENTALS = {-1: "♭", 0: "", 1: "♯"}
 
     def __init__(self, note_index: int, octave: int, accidental=0):
@@ -26,23 +26,30 @@ class Note:
     
     @property
     def semitone_value(self):
-        return 12 * (self.octave + 1) + self.NOTE_STEPS[self.note_index] + self.accidental
+        # designed to return the midi number for each note (69 for A4)
+        val_from_octave = 12 * (self.octave + 1)
+        val_from_semitone = self.NOTE_SEMITONE_STEPS[self.note_index]
+        val_from_accidental = self.accidental
+        return val_from_octave + val_from_accidental + val_from_semitone
 
     def enharmonic_note(self):
         if self.is_natural:
             return self
         return self.note_from_semitone_value(self.semitone_value, self.accidental == 1)
 
+    def note_to_freq(self, a4=440.0):
+        return round(a4 * 2 ** ((self.semitone_value - 69) / 12), 3)
+
     @classmethod
     def note_from_semitone_value(cls, n, flat=False):
         octave, semitones, acc = *divmod(n, 12), 0
         octave -= 1
-        if semitones not in cls.NOTE_STEPS:
+        if semitones not in cls.NOTE_SEMITONE_STEPS:
             if flat:
                 semitones, acc = semitones + 1, acc - 1
             else:
                 semitones, acc = semitones - 1, acc + 1
-        index = cls.NOTE_STEPS.index(semitones)
+        index = cls.NOTE_SEMITONE_STEPS.index(semitones)
         return Note(index, octave, acc)
     
     @classmethod
@@ -52,8 +59,6 @@ class Note:
         cents = cents_from_a4 - 100 * semitones
         note = cls.note_from_semitone_value(69 + semitones)
         return note, round(cents, 2)
-    
-    def note_to_freq(self, a4=440.0):
-        return round(a4 * 2 ** ((self.semitone_value - 69) / 12), 3)
+
     
 note_a4 = Note(5, 4)
