@@ -1,55 +1,46 @@
-from math import log2, pow, sqrt
+from note import Note, note_a4
+from message import Message
 
-note_names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
-A0 = 27.5
-pitches = [f"{n}{i}" for i in range(1, 8) for n in note_names]
-o2 = [f"{n}{0}" for n in note_names[-3:]]
-pitches = [*o2, *pitches, "C8"]
-frequencies = [A0 * pow(2, i / 12) for i, _ in enumerate(pitches)]
-d = dict(zip(frequencies, pitches))
+A4 = 440.0
+A4_MAX, A4_MIN = 500.0, 400.0
 
+def main(freq_a4=A4):
 
-def find_closest_two(sorted_list_of_numbers, number):
-    if number > sorted_list_of_numbers[-1] or number < sorted_list_of_numbers[0]:
-        print("Out of range!")
-        return None
-    list_of_numbers = [*sorted_list_of_numbers]
-    length = len(list_of_numbers)
+    print(Message.welcome)
+    print(Message.info(note_a4, freq_a4))
 
-    while length > 2:
-        lower_half, upper_half = list_of_numbers[length // 2 - 1], list_of_numbers[length // 2]
-        if number <= lower_half:
-            list_of_numbers = list_of_numbers[:length // 2]
-        elif number >= upper_half:
-            list_of_numbers = list_of_numbers[length // 2:]
+    while True:
+        
+        i = input(Message.enter_freq).strip().lower()
+        
+        if i == "x":
+            print(Message.bye)
+            break
+        if i == "f":
+            while True:
+                f = input(Message.prompt_a4(note_a4, freq_a4)).strip().lower()
+                if f == "x":
+                    print(Message.back_to_main)
+                    break
+                try:
+                    new_a4 = float(f)
+                    if A4_MIN <= new_a4 <= A4_MAX:
+                        print(Message.a4_set(note_a4, freq_a4, new_a4))
+                        freq_a4 = new_a4
+                        break
+                    print(Message.a4_out_of_range(note_a4, A4_MIN, A4_MAX))
+                except ValueError:
+                    print(Message.inv_freq)
+
         else:
-            return [lower_half, upper_half]
-        length = len(list_of_numbers)
-    return list_of_numbers
-
-
-def find_closest_one(pair_of_numbers, number):
-    lo, hi = pair_of_numbers
-    result = hi if number >= sqrt(lo * hi) else lo
-    return result
-
-
-def find_closest_note(freq):
-    closest_two = find_closest_two(frequencies, freq)
-    if not closest_two:
-        raise ValueError
-    f0 = find_closest_one(closest_two, freq)
-    cents = round(1200 * log2(freq / f0), 2)
-    print(f"Closest pitch to {freq} Hz: {d[f0]} ({round(f0, 3)} Hz), {cents} cents difference.\n")
+            try:
+                freq = float(i)
+                note, cents_diff = Note.freq_to_note(freq, freq_a4)
+                note_0_cents_freq = note.note_to_freq(freq_a4)
+                print(Message.closest(freq, note, note_0_cents_freq, cents_diff))
+            except ValueError:
+                print(Message.inv_freq)
 
 
 if __name__ == "__main__":
-
-    while True:
-        print("Enter frequency in Hz: ", end="")
-        try:
-            f = float(input())
-            find_closest_note(f)
-        except ValueError:
-            print("Value error. Terminating...")
-            break
+    main()
