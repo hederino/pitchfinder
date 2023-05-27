@@ -37,8 +37,9 @@ def main(freq_a4=A4):
             try:
                 freq = float(i)
                 note, cents_diff = Note.freq_to_note(freq, freq_a4)
+                note_str = str(note) if note.is_natural else f"{note}/{note.enharmonic_note()}"
                 note_0_cents_freq = note.note_to_freq(freq_a4)
-                print(Message.closest(freq, note, note_0_cents_freq, cents_diff))
+                print(Message.closest(freq, note_str, note_0_cents_freq, cents_diff))
             except ValueError:
                 print(Message.inv_freq)
 
