@@ -5,6 +5,7 @@ class Message:
     back_to_main = "\nGoing back to the main loop..."
     bye = "\nGoodbye!\n"
     invalid_freq = "\nInvalid value for a frequency."
+    bad_argument = "\nThe command line argument you supplied is not a valid frequency value."
 
     @classmethod
     def info(cls, x, y):
@@ -33,3 +34,8 @@ class Message:
         str2 = f"The frequency of {x} must be between {y} Hz and {z} Hz."
         return str1 + str2
     
+    @classmethod
+    def arg_out_of_range(cls, x, y, z):
+        str1 = f"\nThe command line argument you've entered is out of range. "
+        str2 = f"The frequency of {x} must be between {y} Hz and {z} Hz."
+        return str1 + str2

@@ -1,9 +1,13 @@
+import sys
 from note import Note, note_a4
 from message import Message
 
 A4 = 440.0
 A4_MAX, A4_MIN = 500.0, 400.0
 
+
+def is_a4_in_range(new_a4):
+    return A4_MIN <= new_a4 <= A4_MAX
 
 def set_a4(freq_a4):
 
@@ -14,7 +18,7 @@ def set_a4(freq_a4):
             break
         try:
             new_a4 = float(f)
-            if A4_MIN <= new_a4 <= A4_MAX:
+            if is_a4_in_range(new_a4):
                 return new_a4
             print(Message.a4_out_of_range(note_a4, A4_MIN, A4_MAX))
         except ValueError:
@@ -23,6 +27,20 @@ def set_a4(freq_a4):
 def main(freq_a4=A4):
 
     print(Message.welcome)
+
+    args = sys.argv
+
+    if len(args) > 1:
+        arg_a4_str = args[1]
+        try:
+            arg_a4 = float(arg_a4_str)
+            if is_a4_in_range(arg_a4):
+                freq_a4 = arg_a4
+            else:
+                print(Message.arg_out_of_range(note_a4, A4_MIN, A4_MAX))    
+        except:
+            print(Message.bad_argument)    
+
     print(Message.info(note_a4, freq_a4))
 
     while True:
