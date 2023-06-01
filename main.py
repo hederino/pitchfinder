@@ -5,7 +5,6 @@ from message import Message
 A4 = 440.0
 A4_MAX, A4_MIN = 500.0, 400.0
 
-
 def is_a4_in_range(new_a4):
     return A4_MIN <= new_a4 <= A4_MAX
 
@@ -43,7 +42,7 @@ def main(freq_a4=A4):
     print(Message.info(note_a4, freq_a4))
 
     while True:
-        
+
         i = input(Message.enter_freq).strip().lower()
         
         if i == "x":
@@ -65,7 +64,6 @@ def main(freq_a4=A4):
                 print(Message.closest(freq, note_str, note_0_cents_freq, cents_diff))
             except ValueError:
                 print(Message.invalid_freq)
-
 
 if __name__ == "__main__":
     main()
